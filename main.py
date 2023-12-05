@@ -6,6 +6,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
+from read import get_messages, get_message, get_mime_message
+
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
@@ -40,6 +42,7 @@ def main():
         print("Labels:")
         for label in labels:
             print(label["name"])
+
 
     except HttpError as error:
         # TODO(developer) - Handle errors from gmail API.
