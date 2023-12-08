@@ -39,12 +39,6 @@ def get_pages(num_pages=None):
 
     data = response.json()
 
-    # Comment this out to dump all data to a file
-    import json
-
-    with open("db.json", "w", encoding="utf8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-
     results = data.get("results", [])
 
     while data["has_more"] and get_all:
@@ -57,7 +51,6 @@ def get_pages(num_pages=None):
             results.extend(data["results"])
 
     return results
-
 
 # Update a page in the database
 def update_page(page_id: str, data: dict):
