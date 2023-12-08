@@ -9,6 +9,7 @@ from googleapiclient.discovery import build
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
 
+
 # Function to authenticate and build the Gmail service
 def authenticate_gmail():
     creds = None
@@ -29,6 +30,7 @@ def authenticate_gmail():
             token.write(creds.to_json())
 
     return build("gmail", "v1", credentials=creds)
+
 
 # Function to check if the email is anything related to Software Engineering
 def isImportant(email_from, subject):
@@ -52,8 +54,10 @@ def isImportant(email_from, subject):
 
     return False  # Return False if none of the keywords are found
 
+
 # Function to extract the text from the email
-def extractEmail(message):
+def extractEmail(message_id, service):
+    message = service.users().messages().get(userId='me', id=message_id).execute()
     message_payload = message["payload"]
 
     if "parts" in message_payload:  # Check if the message is multipart
@@ -64,14 +68,12 @@ def extractEmail(message):
                 email_text += base64.urlsafe_b64decode(part["body"]["data"]).decode(
                     "utf-8"
                 )  # Decode the text from base64
-                print(email_text)
     else:  # If the message is not multipart, extract text directly from the body
         email_text = base64.urlsafe_b64decode(message_payload["body"]["data"]).decode(
             "utf-8"
         )
-        print(email_text + "1\n")
-
     return email_text
+
 
 # Function to read the email
 def readEmail(message_id, service):
@@ -95,8 +97,8 @@ def readEmail(message_id, service):
 
     is_important = isImportant(message_from, subject)
     if is_important:
-        print(message_id)
-        print(message_from)
-        print(subject + "\n")
+        #print(message_id)
+        #print(message_from)
+        #print(subject + "\n")
         return message_id
     return

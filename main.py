@@ -1,4 +1,5 @@
-from inbox import readEmail, authenticate_gmail
+from inbox import readEmail, authenticate_gmail, extractEmail
+
 
 def main():
     try:
@@ -14,22 +15,30 @@ def main():
             .execute()
         )
 
-        validEmail = []  # List of emails about Software Engineering
-
+        validEmail = []  # List of emails subject about Software Engineering
+        i = 0
         for message in userId["messages"]:  # Loop through all messages
+            i += 1
+            if i == 10:
+                break
+            print(f"Email {i}")
             message_id = message["id"]  # Get the id of each message
             try:
                 result = readEmail(
                     message_id, service
                 )  # Store message id if it is important
+
                 if (
                     result is not None
                 ):  # If the email is important, append it to the list
                     validEmail.append(result)
+                    email_text = extractEmail(result, service)
+                    print(email_text)
                     # print(f"Email with id: {message_id}")
             except:
                 print(f"Error reading email with id: {message_id}")
                 continue
+
     except Exception as error:
         # TODO(developer) - Handle errors from gmail API.
         print(f"An error occurred: {error}")
