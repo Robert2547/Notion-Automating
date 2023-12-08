@@ -1,15 +1,20 @@
 import requests, os
+from dotenv import load_dotenv
 
-NOTION_KEY = os.environ.get("NOTION_KEY")
-DATABASE_ID = os.environ.get("DATABASE_ID")
+# Load environment variables from the .env file
+load_dotenv()
+
+# Access the environment variables
+NOTION_KEY = os.getenv("NOTION_KEY")
+DATABASE_ID = os.getenv("DATABASE_ID")
 
 headers = {
-    "Authorization": "Bearer " + NOTION_KEY,
+    "Authorization": f"Bearer {NOTION_KEY}",
     "Content-Type": "application/json",
     "Notion-Version": "2022-06-28",
 }
 
-
+# Create a page in the database
 def create_page(data: dict):
     create_url = "https://api.notion.com/v1/pages"
 
@@ -19,7 +24,7 @@ def create_page(data: dict):
     print(res.json())
     return res
 
-
+# Get all pages in the database
 def get_pages(num_pages=None):
     """
     If num_pages is None, get all pages, otherwise just the defined number.
@@ -52,3 +57,23 @@ def get_pages(num_pages=None):
             results.extend(data["results"])
 
     return results
+
+
+# Update a page in the database
+def update_page(page_id: str, data: dict):
+    url = f"https://api.notion.com/v1/pages/{page_id}"
+
+    payload = {"properties": data}
+
+    res = requests.patch(url, json=payload, headers=headers)
+    return res
+
+
+# Delete a page in the database
+def delete_page(page_id: str):
+    url = f"https://api.notion.com/v1/pages/{page_id}"
+
+    payload = {"archived": True}
+
+    res = requests.patch(url, json=payload, headers=headers)
+    return res

@@ -13,6 +13,16 @@ def main():
 
     create_page(data)
 
+    pages = get_pages()
+
+    for page in pages:
+        page_id = page["id"]
+        props = page["properties"]
+        company = props["Company"]["title"][0]["text"]["content"]
+        status = props["Status"]["select"]["name"]
+        published = props["Published"]["date"]["start"]
+        published = datetime.fromisoformat(published)
+
 
 if __name__ == "__main__":
     main()
