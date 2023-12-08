@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from notionDB import create_page, get_pages, update_page, delete_page
+from notion_api import create_page, get_pages, update_page, delete_page
 import os
 from dotenv import load_dotenv
 
