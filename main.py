@@ -6,7 +6,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from read import get_messages, get_message, get_mime_message
+
+from read import isImportant, readEmail
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
@@ -33,17 +34,27 @@ def main():
     try:
         # Call the Gmail API
         service = build("gmail", "v1", credentials=creds)
-        results = service.users().labels().list(userId="me").execute()
-        labels = results.get("labels", [])
 
-        if not labels:
-            print("No labels found.")
-            return
-        print("Labels:")
-        for label in labels:
-            print(label["name"])
+        # Get message in user's mailbox
+        # Contain message object: id, threadId, nextPageToken, resultSizeEstimate
+        userId = (
+            service.users()
+            .messages()
+            .list(userId="me", includeSpamTrash=False)
+            .execute()
+        )
+        validEmail = []
 
-
+        for message in userId["messages"]:  # Loop through all messages
+            message_id = message["id"]  # Get the id of each message
+            try:
+                result = readEmail(message_id, service) # Store message id if it is important
+                if result is not None: # If the email is important, append it to the list
+                    validEmail.append(result)
+                    print(f"Email with id: {message_id} is important")
+            except:
+                print(f"Error reading email with id: {message_id}")
+                continue
     except HttpError as error:
         # TODO(developer) - Handle errors from gmail API.
         print(f"An error occurred: {error}")
