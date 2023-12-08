@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-from read import isImportant, readEmail
+from read import readEmail
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ["https://www.googleapis.com/auth/gmail.readonly"]
@@ -51,7 +51,7 @@ def main():
                 result = readEmail(message_id, service) # Store message id if it is important
                 if result is not None: # If the email is important, append it to the list
                     validEmail.append(result)
-                    print(f"Email with id: {message_id} is important")
+                    print(f"Email with id: {message_id}")
             except:
                 print(f"Error reading email with id: {message_id}")
                 continue
