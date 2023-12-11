@@ -1,5 +1,4 @@
 from inbox import readEmail, authenticate_gmail, extractEmail
-from gptAI import gpt
 
 
 def main():
@@ -20,9 +19,8 @@ def main():
         i = 0
         for message in userId["messages"]:  # Loop through all messages
             i += 1
-            if i == 15:
+            if i == 20:
                 break
-            print(f"Email {i}")
             message_id = message["id"]  # Get the id of each message
             try:
                 result = readEmail(
@@ -33,13 +31,9 @@ def main():
                     result is not None
                 ):  # If the email is important, append it to the list
                     validEmail.append(result)
-                    print("here")
                     email_text = extractEmail(result, service)
-                    try:
-                        json_result = gpt(email_text)
-                    except:
-                        print("Error in GPT")
-                    # print(f"Email with id: {message_id}")
+                    print("\n\n" + email_text)
+                    
             except:
                 print(f"Error reading email with id: {message_id}")
                 continue

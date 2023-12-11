@@ -24,13 +24,13 @@ def getGPT(email):
                 "role": "system",
                 "content": """Pretend you are a consultants at analyzing email. You are given a email about software, determine whether this email is about new job posting, if so format the response in JSON format, such as: 
 {
-     Company:
-     Role:
-     Location:
-    URL:
+     "Company":
+     "Role":
+     "Location":
+    "URL":
 } if its anything else return the response in following JSON format and nothing else:
 {
-    Joblist: "No"
+    "Joblist": "No"
 }
 """,
             },
