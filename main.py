@@ -16,7 +16,6 @@ def main():
             .execute()
         )
 
-        validEmail = []  # List of emails subject about Software Engineering
         i = 0
         for message in userId["messages"]:  # Loop through all messages
             i += 1
@@ -31,7 +30,6 @@ def main():
                 if (
                     result is not None
                 ):  # If the email is important, append it to the list
-                    validEmail.append(result)
                     email_text = extractEmail(result, service) # Extract email text
                     joblist(email_text)  # Create a new page in Notion, if the email is about job listing
                     

@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-import os, json
+import os
 from openai import OpenAI
 
 # Load environment variables from .env file
@@ -22,16 +22,26 @@ def getGPT(email):
         messages=[
             {
                 "role": "system",
-                "content": """Pretend you are a consultants at analyzing email. You are given a email about software, determine whether this email is about new job posting, if so format the response in JSON format, such as: 
-{
+                "content": """Pretend you are a consultants at analyzing email.You are given a email about software, determine whether this email is about new job posting or application status update, if the following is joblist use this JSON format:
+ "JobList": "Yes"/"no",
+{   
      "Company":
      "Role":
      "Location":
     "URL":
-} if its anything else return the response in following JSON format and nothing else:
+} else if it about status update:
+"Status": "no"/"yes",
 {
-    "Joblist": "No"
+    "Company":
+    "Status": "Applied"/"Rejected"/"Interview"/"Online Assignment"
 }
+if its anything else return the response in following JSON format and nothing else:
+{
+    "Joblist":  "no"/"yes"
+    "Status": "no"/"yes"
+}
+
+
 """,
             },
             {
