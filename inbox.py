@@ -61,6 +61,7 @@ def extractEmail(message_id, service):
     message_payload = message["payload"]
 
     if "parts" in message_payload:  # Check if the message is multipart
+        #print("multipart")
         parts = message_payload["parts"]  # Get the parts of the message
         email_text = ""
         for part in parts:
