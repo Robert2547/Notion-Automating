@@ -1,4 +1,5 @@
 from inbox import readEmail, authenticate_gmail, extractEmail
+from joblist import joblist
 
 
 def main():
@@ -31,8 +32,8 @@ def main():
                     result is not None
                 ):  # If the email is important, append it to the list
                     validEmail.append(result)
-                    email_text = extractEmail(result, service)
-                    print("\n\n" + email_text)
+                    email_text = extractEmail(result, service) # Extract email text
+                    joblist(email_text)  # Create a new page in Notion, if the email is about job listing
                     
             except:
                 print(f"Error reading email with id: {message_id}")
