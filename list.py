@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
-import os, json
+import os, json, requests
 from dotenv import load_dotenv
 from gptAI import getGPT
-from notion_api import create_page, get_pages, update_page, delete_page
+from notion_api import create_page
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -17,9 +17,16 @@ headers = {
     "Notion-Version": "2022-06-28",
 }
 
+def shorten_url(url):
+    api_url = "http://www.linkedin.com"
+    params = {"url": url}
+    response = requests.get(api_url, params=params)
+    return response.text
+
 
 def main():
-    jobs = getGPT(
+    job_json = getGPT(
+
         """ Top job picks for you: https://www.linkedin.com/comm/jobs/collections/recommended?origin=JYMBII_EMAIL&lgCta=eml-jymbii-bottom-see-all-jobs&lgTemp=jobs_jymbii_digest&lipi=urn%3Ali%3Apage%3Aemail_jobs_jymbii_digest%3BoJm3PurJSSK13UoFrYB2Ug%3D%3D&midToken=AQGPWHouMa64Xw&midSig=1VePZ4Pl4XSX01&trk=eml-jobs_jymbii_digest-null-0-null&trkEmail=eml-jobs_jymbii_digest-null-0-null-null-iu95fh~lpwyjlff~v1-null-null&eid=iu95fh-lpwyjlff-v1&otpToken=MTMwNDFkZTkxMDJlY2ZjMWJjMjcwZmViNDExZWU1YjQ4OWNlZDU0NDlmYTY4YTYzN2JjZjA2NmE0YjUzNTRmM2YxZGNkMmU5NTFkNmVkZTI1MGYyYWI4NTM2NTc3MmExZWE0MDhmN2RmMzEwMjE3OTQ2NGU0M2NhLDEsMQ%3D%3D
   
           
@@ -92,46 +99,40 @@ You are receiving Jobs You Might Be Interested In emails.
 Unsubscribe: https://www.linkedin.com/comm/psettings/email-unsubscribe?lipi=urn%3Ali%3Apage%3Aemail_jobs_jymbii_digest%3BoJm3PurJSSK13UoFrYB2Ug%3D%3D&midToken=AQGPWHouMa64Xw&midSig=1VePZ4Pl4XSX01&trk=eml-jobs_jymbii_digest-unsubscribe-0-textfooterglimmer&trkEmail=eml-jobs_jymbii_digest-unsubscribe-0-textfooterglimmer-null-iu95fh~lpwyjlff~v1-null-null&eid=iu95fh-lpwyjlff-v1&loid=AQEvgaYeVD1dqgAAAYxKtwImNbwmn6qTzaoOlCAm9wDYF6tkxccEFxjhr9A8wwcO0r1w8ONTBAAUH1Un4ieJZUstnT0S-xlEN_zsam5iQos
 Help: https://www.linkedin.com/help/linkedin/answer/67?lang=en&lipi=urn%3Ali%3Apage%3Aemail_jobs_jymbii_digest%3BoJm3PurJSSK13UoFrYB2Ug%3D%3D&midToken=AQGPWHouMa64Xw&midSig=1VePZ4Pl4XSX01&trk=eml-jobs_jymbii_digest-help-0-textfooterglimmer&trkEmail=eml-jobs_jymbii_digest-help-0-textfooterglimmer-null-iu95fh~lpwyjlff~v1-null-null&eid=iu95fh-lpwyjlff-v1&otpToken=MTMwNDFkZTkxMDJlY2ZjMWJjMjcwZmViNDExZWU1YjQ4OWNlZDU0NDlmYTY4YTYzN2JjZjA2NmE0YjUzNTRmM2YxZGNkMmU5NTFkNmVkZTI1MGYyYWI4NTM2NTc3MmExZWE0MDhmN2RmMzEwMjE3OTQ2NGU0M2NhLDEsMQ%3D%3D """
     )
-
+    
     published_date = datetime.now().astimezone(timezone.utc).isoformat()
-    for chunk in jobs:  # Iterate over the chunks of the stream
-        if (
-            chunk.choices[0].delta.content is not None
-        ):  # Check if the model has generated a response
-            print(chunk.choices[0].delta.content, end="")  # Print the response
-            job_json = chunk.choices[0].delta.content
-            print(job_json)
+   
+    try:
+         # Removing the extraneous `json` and backticks
+        clean_json = job_json.replace('json', '').strip().strip('`')
 
-            if job_json:
-                try:
-                    print(job_json)
-                    job_parsed = json.loads(job_json)  # Parse the JSON response
-                    # Further processing with job_parsed...
-                    print(job_parsed)  # Example: Printing the parsed JSON
-                except json.JSONDecodeError as e:
-                    print(f"JSON decoding error: {e}")
-            else:
-                print("job_json is empty or does not contain valid JSON data")
-                exit(1)
-
-            # Access the job title, company name, location, and job URL
-            company = job_parsed["Job"][0]["Company"]
-            role = job_parsed["Job"][0]["Role"]
-            location = job_parsed["Job"][0]["Location"]
-            url = job_parsed["Job"][0]["URL"]
-
-            notion_format = {
-                "Company": {"title": [{"text": {"content": company}}]},
-                "Role": {"rich_text": [{"text": {"content": role}}]},
-                "Location": {"rich_text": [{"text": {"content": location}}]},
-                "Date": {
-                    "date": {"start": published_date}
-                },  # Replace "published_date" with your date value
-                "URL": {"url": url},
+        data = json.loads(clean_json) # Convert the JSON string to a dictionary
+        # Loop through each job in the JSON data
+        for job in data["Job"]:
+            print("\n\nJob:", job)
+            # Extract each field
+            company = job.get("Company", "N/A")
+            role = job.get("Role", "N/A")
+            location = job.get("Location", "N/A")
+            url = job.get("URL", "N/A")
+            
+            notion_format = { # Format the data for Notion
+            "Company": {"title": [{"text": {"content": company}}]},
+            "Role": {"rich_text": [{"text": {"content": role}}]},
+            "Location": {"rich_text": [{"text": {"content": location}}]},
+            "Date": {"date": {"start": published_date}},
+            "URL": {"url": url},
             }
-            # Create a new page in the database
-            create_page(notion_format, DATABASE_ID, headers)
 
+            create_page(notion_format, DATABASE_ID, headers) # Create a new page in Notion
+    
+            print ("Job added to Notion")
+    except Exception as e:
+        print("Error: ", e)
+        return
+
+
+        
 
 if __name__ == "__main__":
     main()
