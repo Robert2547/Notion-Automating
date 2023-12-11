@@ -1,9 +1,12 @@
 from inbox import readEmail, authenticate_gmail, extractEmail
-from joblist import joblist
+from validEmail import validEmail
+
+
 
 
 def main():
     try:
+
         # Call the Gmail API
         service = authenticate_gmail()
 
@@ -27,15 +30,14 @@ def main():
                     message_id, service
                 )  # Store message id if it is important
 
-                if (
-                    result is not None
-                ):  # If the email is important, append it to the list
+                if result is not None:  # If the email is important, append it to the list
                     email_text = extractEmail(result, service) # Extract email text
-                    joblist(email_text)  # Create a new page in Notion, if the email is about job listing
-                    
-            except:
-                print(f"Error reading email with id: {message_id}")
-                continue
+                    validEmail(email_text) # Check if email is a job listing, status update or neither
+
+            except Exception as error:
+                print(f"An error occurred: {error}")
+
+
 
     except Exception as error:
         # TODO(developer) - Handle errors from gmail API.
