@@ -35,7 +35,7 @@ else if it about application update use the following JSON format, and DO NOT in
 {
     "Company":
     "Status": "Applied"/"Rejected"/"Interview"/"Online Assignment"
-}
+    "Role": }
 if its anything else return the response in following JSON format and nothing else:
 {
     "Joblist":  "No"

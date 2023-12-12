@@ -1,7 +1,5 @@
-from datetime import datetime, timezone
-import os, json, requests
+import os, requests
 from dotenv import load_dotenv
-from gpt.statusGPT import getGPT
 from notion_api import create_page
 
 # Load environment variables from the .env file
