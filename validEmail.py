@@ -17,18 +17,20 @@ def validEmail(email_text):
         print(data)
 
         print("\n\nProcessing the email...")
+        moveFolder = 0
 
         if data.get("JobList") == "No" and data.get("Application") == "No":
             print("This email is neither a job listing nor a status update")
             # deleteEmail(result, service) # Delete the email
         elif (data.get("JobList") or "No") == "Yes":
             print("This email is a job listing")
-            add_job(data, published_date)  # Add the job to Notion
+            moveFolder = add_job(data, published_date)  # Add the job to Notion
         elif (data.get("Application") or "No") == "Yes":
             print("This email is a status update")
-            add_application(data, published_date)  # Add the application to Notion
+            moveFolder = add_application(data, published_date)  # Add the application to Notion
 
         print("Email processed successfully")
+        return moveFolder
     except Exception as error:
         print(f"An error occurred: {error}")
         return

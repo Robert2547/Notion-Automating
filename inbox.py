@@ -106,12 +106,38 @@ def readEmail(message_id, service):
         return message_id
     return
 
-# Function to trash the email
-def trashEmail(message_id, service): 
+#Function to move the email to a folder
+def moveEmailToFolder(message_id, folder_id, service):
     try:
-        message = service.users().messages().trash(userId="me", id=message_id).execute()
-        print("Message Id: %s sent to Trash." % message["id"])
+        # The body of the request specifies adding the folder's label ID
+        # and removing the 'INBOX' label to simulate moving the email.
+        body = {"addLabelIds": [folder_id], "removeLabelIds": ["INBOX"]}
+
+        message = (
+            service.users()
+            .messages()
+            .modify(userId="me", id=message_id, body=body)
+            .execute()
+        )
+        print(
+            f"Message Id: {message['id']} moved to folder with Label Id: {folder_id}."
+        )
         return message
     except Exception as error:
-        print("An error occurred while sending email: %s" % error)
+        print(f"An error occurred while moving the email: {error}")
         return None
+
+#Function to list all the labels id
+def list_labels(service):
+    try:
+        results = service.users().labels().list(userId='me').execute()
+        labels = results.get('labels', [])
+
+        if not labels:
+            print('No labels found.')
+            return
+        print('Labels:')
+        for label in labels:
+            print(f"Label Name: {label['name']}, Label Id: {label['id']}")
+    except Exception as error:
+        print(f"An error occurred: {error}")

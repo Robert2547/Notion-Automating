@@ -1,4 +1,4 @@
-from notion_api import create_page, get_pages, update_page, delete_page
+from notion_api import create_page, get_pages, update_page
 import os
 from dotenv import load_dotenv
 
@@ -36,7 +36,7 @@ def add_application(data, published_date):
                 print("Updating status...")
                 update_page(page_id, {"Status": {"name": status}}, headers) # Update the status
                 print("Status updated successfully")
-                return
+                return 1 # Move to Status folder
     except Exception as error:
         print(f"An error occurred: {error}")
         return
@@ -53,3 +53,4 @@ def add_application(data, published_date):
 
     create_page(notion_format, DATABASE_ID, headers)
     print("Application added successfully")
+    return 2 # Move to Application folder
