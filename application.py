@@ -34,8 +34,7 @@ def add_application(data, published_date):
                 page_id = pages["id"]
                 print("Page ID:", page_id)
                 print("Updating status...")
-                print("Company:", company)
-                print("Status:", status)
+                update_page(page_id, {"Status": {"name": status}}, headers) # Update the status
                 print("Status updated successfully")
                 return
     except Exception as error:

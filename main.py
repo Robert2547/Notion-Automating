@@ -20,8 +20,6 @@ def main():
         i = 0
         for message in userId["messages"]:  # Loop through all messages
             i += 1
-            if i == 8:
-                break
             message_id = message["id"]  # Get the id of each message
             try:
                 result = readEmail(

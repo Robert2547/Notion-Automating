@@ -46,7 +46,7 @@ def isImportant(email_from, subject):
         "software internship",
         "@myworkday.com",
         "thank you for applying",
-        "thank"
+        "thank",
     ]
 
     # Check if any keyword is in the sender's email or subject
@@ -59,11 +59,11 @@ def isImportant(email_from, subject):
 
 # Function to extract the text from the email
 def extractEmail(message_id, service):
-    message = service.users().messages().get(userId='me', id=message_id).execute()
+    message = service.users().messages().get(userId="me", id=message_id).execute()
     message_payload = message["payload"]
 
     if "parts" in message_payload:  # Check if the message is multipart
-        #print("multipart")
+        # print("multipart")
         parts = message_payload["parts"]  # Get the parts of the message
         email_text = ""
         for part in parts:
@@ -100,9 +100,18 @@ def readEmail(message_id, service):
 
     is_important = isImportant(message_from, subject)
     if is_important:
-        #print(message_id)
-        #print(message_from)
-        #print(subject + "\n")
+        # print(message_id)
+        # print(message_from)
+        # print(subject + "\n")
         return message_id
     return
 
+# Function to trash the email
+def trashEmail(message_id, service): 
+    try:
+        message = service.users().messages().trash(userId="me", id=message_id).execute()
+        print("Message Id: %s sent to Trash." % message["id"])
+        return message
+    except Exception as error:
+        print("An error occurred while sending email: %s" % error)
+        return None
