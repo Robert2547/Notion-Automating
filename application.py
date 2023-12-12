@@ -7,9 +7,13 @@ load_dotenv()
 
 # Access the environment variables
 STATUS_KEY = os.getenv("NOTION_KEY")
-JOBLIST_KEY = os.getenv("SWE_KEY")
 DATABASE_ID = os.getenv("DATABASE_ID")
+
+
+JOBLIST_KEY = os.getenv("SWE_KEY")
 JOBDB_KEY = os.getenv("SWE_DATABASE_ID")
+
+
 
 
 headers_status = {

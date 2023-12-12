@@ -44,4 +44,4 @@ def add_job(data, published_date):
 
         create_page(notion_format, DATABASE_ID, headers)  # Create a new page in Notion
         print("Job added successfully")
-        return 3 # Move to Trash folder
+    return 3 # Move to Trash folder

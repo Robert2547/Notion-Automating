@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-import os, json, requests
+import json
 from application import add_application
 from gpt.statusGPT import getGPT
 from joblist import add_job
@@ -13,8 +13,6 @@ def validEmail(email_text):
         clean_json = job_json.replace("json", "").strip().strip("`")
 
         data = json.loads(clean_json)  # Convert the JSON string to a dictionary
-        print("\nJSON is loaded: ")
-        print(data)
 
         print("\n\nProcessing the email...")
         moveFolder = 0
@@ -29,7 +27,7 @@ def validEmail(email_text):
             print("This email is a status update")
             moveFolder = add_application(data, published_date)  # Add the application to Notion
 
-        print("Email processed successfully")
+        print(f"Move to folder: {moveFolder}")
         return moveFolder
     except Exception as error:
         print(f"An error occurred: {error}")
