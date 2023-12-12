@@ -22,23 +22,24 @@ def getGPT(email):
         messages=[
             {
                 "role": "system",
-                "content": """Pretend you are a consultants at analyzing email.You are given a email about software, determine whether this email is about new job posting or application status update, if the following is joblist use this JSON format:
- "JobList": "Yes"/"no",
-{   
+                "content": """Pretend you are a consultants at analyzing email.You are given a email about software, determine whether this email is about new job posting or application, if the following is about new job posting use this JSON format:
+ "JobList": "Yes",
+{ Jobs:[   
      "Company":
      "Role":
      "Location":
     "URL":
-} else if it about status update:
-"Status": "no"/"yes",
+]} 
+else if it about application update use the following JSON format, and DO NOT include the "JobList":
+"Application": "Yes",
 {
     "Company":
     "Status": "Applied"/"Rejected"/"Interview"/"Online Assignment"
 }
 if its anything else return the response in following JSON format and nothing else:
 {
-    "Joblist":  "no"/"yes"
-    "Status": "no"/"yes"
+    "Joblist":  "No"
+    "Application": "No"
 }
 
 
@@ -47,8 +48,8 @@ if its anything else return the response in following JSON format and nothing el
             {
                 "role": "user",
                 "content": email,
-            },
-        ],
+            }, 
+        ], temperature=0.1
     )
 
     # Extract the response

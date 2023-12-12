@@ -27,13 +27,14 @@ def shorten_url(url):
 
 def add_job(data, published_date):
     # Loop through each job in the JSON data
-    for job in data["Job"]:
-        print("\n\nJob:", job)
+    for job in data["Jobs"]:
         # Extract each field
         company = job.get("Company", "N/A")
         role = job.get("Role", "N/A")
         location = job.get("Location", "N/A")
         url = job.get("URL", "N/A")
+
+        print(f"\nAdding {role} at {company} to Notion...")
 
         notion_format = {  # Format the data for Notion
             "Company": {"title": [{"text": {"content": company}}]},

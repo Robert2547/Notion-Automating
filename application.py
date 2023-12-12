@@ -27,6 +27,8 @@ def add_application(data, published_date):
         status = job.get("Status", "N/A")
         role = "Software Engineer Intern"
 
+        print("\nCompany:", company)
+        print("Status:", status)
 
         notion_format = {
         "Company": {"type": "title", "title": [{"text": {"content": company}}]},
