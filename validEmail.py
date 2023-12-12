@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import os, json, requests
+from application import add_application
 from gpt.statusGPT import getGPT
 from joblist import add_job
 
@@ -25,6 +26,7 @@ def validEmail(email_text):
             add_job(data, published_date)  # Add the job to Notion
         elif (data.get("Application") or "No") == "Yes":
             print("This email is a status update")
+            add_application(data, published_date)  # Add the application to Notion
 
         print("Email processed successfully")
     except Exception as error:

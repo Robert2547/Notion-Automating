@@ -2,8 +2,6 @@ from inbox import readEmail, authenticate_gmail, extractEmail
 from validEmail import validEmail
 
 
-
-
 def main():
     try:
 

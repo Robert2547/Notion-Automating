@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 from notion_api import create_page, get_pages, update_page, delete_page
 import os
 from dotenv import load_dotenv
@@ -18,19 +17,32 @@ headers = {
 
 
 def add_application(data, published_date):
+    # Extract each field
+    company = data.get("Company", "N/A")
+    status = data.get("Status", "N/A")
+    role = "Software Engineer Intern"
 
-    # Loop through each job in the JSON data
-    for job in data["Job"]:
-        print("\n\nJob:", job)
-        # Extract each field
-        company = job.get("Company", "N/A")
-        status = job.get("Status", "N/A")
-        role = "Software Engineer Intern"
+    print("\nCompany:", company)
+    print("Status:", status)
 
-        print("\nCompany:", company)
-        print("Status:", status)
-
-        notion_format = {
+    try:
+        page = get_pages(headers, DATABASE_ID)  # Get all pages in the database
+        for pages in page:  # Loop through each page
+            if (
+                pages["properties"]["Company"]["title"][0]["text"]["content"] == company
+            ):  # If the company name already exists in the database
+                page_id = pages["id"]
+                print("Page ID:", page_id)
+                print("Updating status...")
+                print("Company:", company)
+                print("Status:", status)
+                print("Status updated successfully")
+                return
+    except Exception as error:
+        print(f"An error occurred: {error}")
+        return
+    
+    notion_format = {
         "Company": {"type": "title", "title": [{"text": {"content": company}}]},
         "Status": {"type": "status", "status": {"name": status}},
         "Date": {"type": "date", "date": {"start": published_date, "end": None}},
@@ -40,7 +52,5 @@ def add_application(data, published_date):
         },
     }
 
-        create_page(notion_format, DATABASE_ID, headers)
-
-   
-
+    create_page(notion_format, DATABASE_ID, headers)
+    print("Application added successfully")
