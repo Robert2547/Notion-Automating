@@ -33,12 +33,13 @@ def main():
                     print("\nEmail text:")
                     print(email_text)
                     moveFolder = validEmail(email_text) # Check if email is a job listing, status update or neither
+                    print(f"Main move to folder: {moveFolder}")
                     if moveFolder == 1:
-                        moveEmailToFolder(result_id, service, Status_id) # Move email to Status folder
+                        moveEmailToFolder(result_id, Status_id, service) # Move email to Status folder
                     elif moveFolder == 2:
-                        moveEmailToFolder(result_id, service, Application_id) # Move email to Application folder
+                        moveEmailToFolder(result_id, Application_id, service) # Move email to Application folder
                     elif moveFolder == 3:
-                        moveEmailToFolder(result_id, service, "TRASH")
+                        moveEmailToFolder(result_id, "TRASH", service)
 
 
             except Exception as error:
