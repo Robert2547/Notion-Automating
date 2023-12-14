@@ -1,4 +1,4 @@
-from notion_api import create_page, get_pages, update_page, delete_page
+from library.notion import create_page, get_pages, update_page, delete_page
 import os
 from dotenv import load_dotenv
 

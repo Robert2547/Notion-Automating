@@ -1,4 +1,4 @@
-from inbox import readEmail, authenticate_gmail, extractEmail, moveEmailToFolder
+from library.gmail import readEmail, authenticate_gmail, extractEmail, moveEmailToFolder
 from validEmail import validEmail
 
 
@@ -34,12 +34,12 @@ def main():
                     print(email_text)
                     moveFolder = validEmail(email_text) # Check if email is a job listing, status update or neither
                     print(f"Main move to folder: {moveFolder}")
-                    if moveFolder == 1:
-                        moveEmailToFolder(result_id, Status_id, service) # Move email to Status folder
-                    elif moveFolder == 2:
-                        moveEmailToFolder(result_id, Application_id, service) # Move email to Application folder
-                    elif moveFolder == 3:
-                        moveEmailToFolder(result_id, "TRASH", service)
+                    #if moveFolder == 1:
+                       #moveEmailToFolder(result_id, Status_id, service) # Move email to Status folder
+                    #elif moveFolder == 2:
+                        #moveEmailToFolder(result_id, Application_id, service) # Move email to Application folder
+                    #elif moveFolder == 3:
+                        #moveEmailToFolder(result_id, "TRASH", service)
 
 
             except Exception as error:

@@ -1,6 +1,6 @@
 import os, requests
 from dotenv import load_dotenv
-from notion_api import create_page
+from library.notion import create_page
 
 # Load environment variables from the .env file
 load_dotenv()
