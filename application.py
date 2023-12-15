@@ -37,6 +37,8 @@ def add_application(data, published_date):
 
     print("\nCompany:", company)
     print("Status:", status)
+    print("Role:", role)
+    print("\n")
 
     moveOption = 0
 
@@ -51,22 +53,19 @@ def add_application(data, published_date):
 
                     if (joblist_pages["properties"]["Company"]["title"][0]["text"]["content"] == company) and (joblist_pages["properties"]["Role"]["rich_text"][0]["text"]["content"] == role):
                         # If the company name and role already exists in the joblist notion database
-                        # Move the page to the trash, update the status and move the email to trash
+                        # Delete the page in joblist notion database and update the status in application notion database
 
                         print("\nCompany and role already exists in the joblist notion database!")
                         joblist_page_id = joblist_pages["id"]
                         delete_page(joblist_page_id, headers_application)  # Move the page to the trash
-                        print("Page moved to trash successfully!\n")
-                        moveOption = 3 # Move to Trash folder
+                        print("Page has been deleted!\n")
                         break
                          
                 page_id = pages["id"]
                 update_page( page_id, {"Status": {"name": status}}, headers_status)  # Update the status
                 print("Status updated successfully")
                 
-                if moveOption != 3:
-                    moveOption = 1 # Move to Status folder
-                return moveOption  
+                return 1 # Move to Status folder  
             
     except Exception as error:
         print(f"An error occurred: {error}")

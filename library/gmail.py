@@ -44,7 +44,6 @@ def isImportant(email_from, subject):
         "intern",
         "internship",
         "software internship",
-        "@myworkday.com",
         "thank you for applying",
         "thank", "application", "apply"
     ]
