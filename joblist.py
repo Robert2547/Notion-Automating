@@ -1,11 +1,12 @@
 import os, requests
 from dotenv import load_dotenv
-from library.notion import create_page
+from library.notion import create_page, get_pages
 
 # Load environment variables from the .env file
 load_dotenv()
 
 # Access the environment variables
+#Joblist notion key
 NOTION_KEY = os.getenv("SWE_KEY")
 DATABASE_ID = os.getenv("SWE_DATABASE_ID")
 
@@ -26,11 +27,15 @@ def shorten_url(url):
 def add_job(data, published_date):
     # Loop through each job in the JSON data
     for job in data["Jobs"]:
-        # Extract each field
+
+        if exists(job):
+            continue # Skip if the job already exists in the joblist notion database
+
         company = job.get("Company", "N/A")
         role = job.get("Role", "N/A")
         location = job.get("Location", "N/A")
         url = job.get("URL", "N/A")
+
         notion_format = {  # Format the data for Notion
             "Company": {"title": [{"text": {"content": company}}]},
             "Role": {"rich_text": [{"text": {"content": role}}]},
@@ -41,3 +46,11 @@ def add_job(data, published_date):
         create_page(notion_format, DATABASE_ID, headers)  # Create a new page in Notion
         
     return 3 # Move to Trash folder
+
+# Check if the job already exists in the joblist notion database
+def exists(job):
+    joblist = get_pages(headers, DATABASE_ID)  # Get all pages in the joblist notion database
+    for page in joblist:
+        if (page["properties"]["Company"]["title"][0]["text"]["content"] == job.get("Company", "N/A")) and (page["properties"]["Role"]["rich_text"][0]["text"]["content"] == job.get("Role", "N/A")):
+            return True
+    return False
