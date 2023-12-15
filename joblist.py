@@ -31,9 +31,6 @@ def add_job(data, published_date):
         role = job.get("Role", "N/A")
         location = job.get("Location", "N/A")
         url = job.get("URL", "N/A")
-
-        print(f"\nAdding {role} at {company} to Notion...")
-
         notion_format = {  # Format the data for Notion
             "Company": {"title": [{"text": {"content": company}}]},
             "Role": {"rich_text": [{"text": {"content": role}}]},
@@ -41,7 +38,6 @@ def add_job(data, published_date):
             "Date": {"date": {"start": published_date}},
             "URL": {"url": url},
         }
-
         create_page(notion_format, DATABASE_ID, headers)  # Create a new page in Notion
-        print("Job added successfully")
+        
     return 3 # Move to Trash folder
