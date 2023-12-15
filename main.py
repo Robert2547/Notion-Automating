@@ -18,9 +18,9 @@ def main():
         )
 
         moveFolder =  0 # 1 = Status, 2 = Application, 3 = Trash
+
         Status_id = "Label_4431053980928013011"
         Application_id = "Label_6204160254045272793"
-
         for message in userId.get("messages", []):  # Loop through all messages
             message_id = message["id"]  # Get the id of each message
 

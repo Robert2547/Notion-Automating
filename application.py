@@ -44,7 +44,7 @@ def add_application(data, published_date):
         page = get_pages(headers_status, DATABASE_ID)  # Get all pages in the database
 
         for pages in page:  # Loop through each page
-            if ( pages["properties"]["Company"]["title"][0]["text"]["content"] == company ):  # If the company name already exists in the status notion database
+            if (pages["properties"]["Company"]["title"][0]["text"]["content"] == company):  # If the company name already exists in the status notion database
                 joblist_page = get_pages( headers_application, JOBDB_KEY )  # Get all pages in the joblist notion database
 
                 for joblist_pages in joblist_page:  # Loop through each page
@@ -60,13 +60,13 @@ def add_application(data, published_date):
                         break
                          
                 page_id = pages["id"]
-                print("Updating status...")
                 update_page( page_id, {"Status": {"name": status}}, headers_status)  # Update the status
                 print("Status updated successfully")
-
+                
                 if moveOption != 3:
                     moveOption = 1 # Move to Status folder
                 return moveOption  
+            
     except Exception as error:
         print(f"An error occurred: {error}")
         return
@@ -75,12 +75,10 @@ def add_application(data, published_date):
         "Company": {"type": "title", "title": [{"text": {"content": company}}]},
         "Status": {"type": "status", "status": {"name": status}},
         "Date": {"type": "date", "date": {"start": published_date, "end": None}},
-        "Position": {
-            "type": "multi_select",
-            "multi_select": [{"name": role}],
-        },
+        "Position": {"type": "text", "text": [{"text": {"content": role}}],},
     }
 
     create_page(notion_format, DATABASE_ID, headers_status)
     print("Application added successfully")
+    
     return 2 # Move to Application folder
