@@ -48,7 +48,7 @@ def add_application(data, published_date):
         for pages in page:  # Loop through each page
             if (pages["properties"]["Company"]["title"][0]["text"]["content"] == company):  # If the company name already exists in the status notion database
                 joblist_page = get_pages( headers_application, JOBDB_KEY )  # Get all pages in the joblist notion database
-
+                print("\nCompany already exists in the application notion database!")
                 for joblist_pages in joblist_page:  # Loop through each page
 
                     if (joblist_pages["properties"]["Company"]["title"][0]["text"]["content"] == company) and (joblist_pages["properties"]["Role"]["rich_text"][0]["text"]["content"] == role):
@@ -62,13 +62,11 @@ def add_application(data, published_date):
                         break
                          
                 page_id = pages["id"]
-                update_page( page_id, {"Status": {"name": status}}, headers_status)  # Update the status
-                print("Status updated successfully")
-                
-                return 1 # Move to Status folder  
-            
+                update_page( page_id, {"Updated Status": {"name": status}}, headers_status)  # Update the status                
+                return 2 # Move to Status folder  
+        print("\nCompany does not exist in the application notion database!") 
     except Exception as error:
-        print(f"An error occurred: {error}")
+        print(f"An error occurre in add_application: {error}")
         return
 
     notion_format = {
@@ -81,4 +79,4 @@ def add_application(data, published_date):
     create_page(notion_format, DATABASE_ID, headers_status)
     print("Application added successfully")
 
-    return 2 # Move to Application folder
+    return 1 # Move to Application folder
