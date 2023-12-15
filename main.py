@@ -17,7 +17,7 @@ def main():
             .execute()
         )
 
-        moveFolder =  0 # 1 = Status, 2 = Application, 3 = Trash
+        moveFolder =  0 # 1 = Status, 2 = Joblist, 3 = Trash
 
         Status_id = "Label_4431053980928013011"
         Application_id = "Label_6204160254045272793"
@@ -33,19 +33,20 @@ def main():
                     print("\nEmail text:")
                     print(email_text)
                     moveFolder = validEmail(email_text) # Check if email is a job listing, status update or neither
-                    print(f"Main move to folder: {moveFolder}")
 
                     if moveFolder == 1:
-                       print("Moving email to Status folder")
-                       moveEmailToFolder(result_id, Status_id, service) # Move email to Status folder
+                       print("Moving email to Application/Status folder")
+                       moveEmailToFolder(result_id, Status_id, service) # Move email to Application/Status folder
 
                     elif moveFolder == 2:
-                        print("Moving email to Application folder")
-                        moveEmailToFolder(result_id, Application_id, service) # Move email to Application folder
+                        print("Moving email to Joblist folder")
+                        moveEmailToFolder(result_id, Application_id, service) # Move email to Joblist folder
 
                     elif moveFolder == 3:
                         print("Moving email to Trash folder")
                         moveEmailToFolder(result_id, "TRASH", service)
+                    else:
+                        print("Email is neither a job listing nor a application update")
 
             except Exception as error:
                 print(f"An error occurred while trying to read email: {error}")

@@ -1,6 +1,7 @@
 import base64
 import os.path
 
+from bs4 import BeautifulSoup
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -61,19 +62,21 @@ def extractEmail(message_id, service):
     message = service.users().messages().get(userId="me", id=message_id).execute()
     message_payload = message["payload"]
 
-    if "parts" in message_payload:  # Check if the message is multipart
-        # print("multipart")
-        parts = message_payload["parts"]  # Get the parts of the message
+    if "parts" in message_payload:
+        parts = message_payload["parts"]
         email_text = ""
         for part in parts:
-            if part["mimeType"] == "text/plain":
-                email_text += base64.urlsafe_b64decode(part["body"]["data"]).decode(
-                    "utf-8"
-                )  # Decode the text from base64
-    else:  # If the message is not multipart, extract text directly from the body
-        email_text = base64.urlsafe_b64decode(message_payload["body"]["data"]).decode(
-            "utf-8"
-        )
+            if part["mimeType"] == "text/html":  # Look for HTML content
+                html_content = base64.urlsafe_b64decode(part["body"]["data"]).decode("utf-8")
+                soup = BeautifulSoup(html_content, "html.parser")
+                for p in soup.find_all('p'):  # Extract text from paragraph tags
+                    email_text += p.get_text() + "\n"
+    else:
+        if message_payload["mimeType"] == "text/html":
+            html_content = base64.urlsafe_b64decode(message_payload["body"]["data"]).decode("utf-8")
+            soup = BeautifulSoup(html_content, "html.parser")
+            email_text = "\n".join(p.get_text() for p in soup.find_all('p'))
+
     return email_text
 
 
@@ -99,9 +102,6 @@ def readEmail(message_id, service):
 
     is_important = isImportant(message_from, subject)
     if is_important:
-        # print(message_id)
-        # print(message_from)
-        # print(subject + "\n")
         return message_id
     return
 

@@ -18,7 +18,7 @@ else:
 
 def getGPT(email):
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo-1106",
+        model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "system",
@@ -40,7 +40,9 @@ if its anything else return the response in following JSON format and nothing el
 {
     "Joblist":  "No"
     "Application": "No"
-}
+} If you are given email from the following assume that I already finish my application: 
+"Thanks for your interest in (role) on WayUp! Have you completed the second part of the application process on (company)"
+
 
 
 """,
@@ -48,8 +50,9 @@ if its anything else return the response in following JSON format and nothing el
             {
                 "role": "user",
                 "content": email,
-            }, 
-        ], temperature=0.1
+            },
+        ],
+        temperature=0.1,
     )
 
     # Extract the response

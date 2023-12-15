@@ -33,7 +33,7 @@ def add_application(data, published_date):
     # Extract each field
     company = data.get("Company", "N/A")
     status = data.get("Status", "N/A")
-    role = data.get("Role", "N/A")
+    role = data.get("Role", "Software Engineer Intern (default)")
 
     print("\nCompany:", company)
     print("Status:", status)
