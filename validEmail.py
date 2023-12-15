@@ -26,9 +26,8 @@ def validEmail(email_text):
         elif (data.get("Application") or "No") == "Yes":
             print("This email is a application/status update")
             moveFolder = add_application(data, published_date)  # Add the application to Notion
-        print(f"Move to folder: {moveFolder}")
-
         return moveFolder
+    
     except Exception as error:
         print(f"An error occurred in validEmail function: {error}")
         return

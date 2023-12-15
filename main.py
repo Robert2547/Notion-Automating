@@ -17,7 +17,7 @@ def main():
             .execute()
         )
 
-        moveFolder =  0 # 1 = Status, 2 = Joblist, 3 = Trash
+        moveFolder =  0 # 1 = Application, 2 = Status, 3 = Trash(Joblist)
 
         Status_id = "Label_4431053980928013011"
         Application_id = "Label_6204160254045272793"
@@ -34,15 +34,15 @@ def main():
                     print(email_text)
                     moveFolder = validEmail(email_text) # Check if email is a job listing, status update or neither
 
-                    if moveFolder == 1:
-                       print("Moving email to Application/Status folder")
-                       moveEmailToFolder(result_id, Status_id, service) # Move email to Application/Status folder
+                    if moveFolder == 2: # Move status update email to status folder
+                       print("Moving email to Status folder")
+                       moveEmailToFolder(result_id, Status_id, service) 
 
-                    elif moveFolder == 2:
-                        print("Moving email to Joblist folder")
-                        moveEmailToFolder(result_id, Application_id, service) # Move email to Joblist folder
+                    elif moveFolder == 1: # Move new application email to application folder
+                        print("Moving email to Application folder")
+                        moveEmailToFolder(result_id, Application_id, service) 
 
-                    elif moveFolder == 3:
+                    elif moveFolder == 3: # Move joblist email to trash
                         print("Moving email to Trash folder")
                         moveEmailToFolder(result_id, "TRASH", service)
                     else:

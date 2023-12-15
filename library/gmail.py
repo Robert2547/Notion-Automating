@@ -118,9 +118,6 @@ def moveEmailToFolder(message_id, folder_id, service):
             .modify(userId="me", id=message_id, body=body)
             .execute()
         )
-        print(
-            f"Message Id: {message['id']} moved to folder with Label Id: {folder_id}."
-        )
         return message
     except Exception as error:
         print(f"An error occurred while moving the email: {error}")
