@@ -46,7 +46,7 @@ def isImportant(email_from, subject):
         "software internship",
         "@myworkday.com",
         "thank you for applying",
-        "thank",
+        "thank", "application", "apply"
     ]
 
     # Check if any keyword is in the sender's email or subject
