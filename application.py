@@ -60,7 +60,8 @@ def add_application(data, published_date):
                         break
                          
                 page_id = pages["id"]
-                update_page( page_id, {"Updated Status": {"name": status}}, headers_status)  # Update the status                
+                update_page( page_id, {"Status": {"status": {"name": status}}}, headers_status)  # Update the status
+                print(f"Status has been updated to {status}!\n")
                 return 2 # Move to Status folder  
         print("\nCompany does not exist in the application notion database!") 
     except Exception as error:

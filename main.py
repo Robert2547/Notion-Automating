@@ -21,6 +21,7 @@ def main():
 
         Status_id = "Label_4431053980928013011"
         Application_id = "Label_6204160254045272793"
+        
         for message in userId.get("messages", []):  # Loop through all messages
             message_id = message["id"]  # Get the id of each message
 
@@ -56,7 +57,7 @@ def main():
 
     except Exception as error:
         # TODO
-        print(f"An error occurred: {error}")
+        print(f"An error occurred in main: {error}")
 
 
 if __name__ == "__main__":
