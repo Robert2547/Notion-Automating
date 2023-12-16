@@ -46,7 +46,9 @@ def isImportant(email_from, subject):
         "internship",
         "software internship",
         "thank you for applying",
-        "thank", "application", "apply"
+        "thank",
+        "application",
+        "apply",
     ]
 
     # Check if any keyword is in the sender's email or subject
@@ -67,15 +69,19 @@ def extractEmail(message_id, service):
         email_text = ""
         for part in parts:
             if part["mimeType"] == "text/html":  # Look for HTML content
-                html_content = base64.urlsafe_b64decode(part["body"]["data"]).decode("utf-8")
+                html_content = base64.urlsafe_b64decode(part["body"]["data"]).decode(
+                    "utf-8"
+                )
                 soup = BeautifulSoup(html_content, "html.parser")
-                for p in soup.find_all('p'):  # Extract text from paragraph tags
+                for p in soup.find_all("p"):  # Extract text from paragraph tags
                     email_text += p.get_text() + "\n"
     else:
         if message_payload["mimeType"] == "text/html":
-            html_content = base64.urlsafe_b64decode(message_payload["body"]["data"]).decode("utf-8")
+            html_content = base64.urlsafe_b64decode(
+                message_payload["body"]["data"]
+            ).decode("utf-8")
             soup = BeautifulSoup(html_content, "html.parser")
-            email_text = "\n".join(p.get_text() for p in soup.find_all('p'))
+            email_text = "\n".join(p.get_text() for p in soup.find_all("p"))
 
     return email_text
 
@@ -105,7 +111,8 @@ def readEmail(message_id, service):
         return message_id
     return
 
-#Function to move the email to a folder
+
+# Function to move the email to a folder
 def moveEmailToFolder(message_id, folder_id, service):
     try:
         # The body of the request specifies adding the folder's label ID
@@ -123,17 +130,25 @@ def moveEmailToFolder(message_id, folder_id, service):
         print(f"An error occurred while moving the email: {error}")
         return None
 
-#Function to list all the labels id
+
+# Function to list all the labels id
 def list_labels(service):
     try:
-        results = service.users().labels().list(userId='me').execute()
-        labels = results.get('labels', [])
+        results = service.users().labels().list(userId="me").execute()
+        labels = results.get("labels", [])
 
         if not labels:
-            print('No labels found.')
+            print("No labels found.")
             return
-        print('Labels:')
+        print("Labels:")
         for label in labels:
             print(f"Label Name: {label['name']}, Label Id: {label['id']}")
     except Exception as error:
         print(f"An error occurred: {error}")
+
+
+# Function to remove label from email
+def removeLabelFromEmail(service, message_id, label_ids):
+    service.users().messages().modify(
+        userId="me", id=message_id, body={"removeLabelIds": label_ids}
+    ).execute()

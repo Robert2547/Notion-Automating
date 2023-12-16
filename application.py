@@ -50,11 +50,9 @@ def add_application(data, published_date):
                 joblist_page = get_pages( headers_application, JOBDB_KEY )  # Get all pages in the joblist notion database
                 print("\nCompany already exists in the application notion database!")
                 for joblist_pages in joblist_page:  # Loop through each page
-
                     if (joblist_pages["properties"]["Company"]["title"][0]["text"]["content"] == company) and (joblist_pages["properties"]["Role"]["rich_text"][0]["text"]["content"] == role):
                         # If the company name and role already exists in the joblist notion database
                         # Delete the page in joblist notion database and update the status in application notion database
-
                         print("\nCompany and role already exists in the joblist notion database!")
                         joblist_page_id = joblist_pages["id"]
                         delete_page(joblist_page_id, headers_application)  # Move the page to the trash
