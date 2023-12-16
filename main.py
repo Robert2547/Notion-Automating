@@ -23,6 +23,7 @@ def main():
         Application_id = "Label_6204160254045272793"
         for message in userId.get("messages", []):  # Loop through all messages
             message_id = message["id"]  # Get the id of each message
+
             try:
                 result_id = readEmail(message_id, service)  # Store message id if it is important
 
@@ -34,7 +35,7 @@ def main():
                     moveFolder = validEmail(email_text) # Check if email is a job listing, status update or neither 
 
                     if moveFolder != 0: #Remove updates label
-                        removeLabelFromEmail(result_id, service, "CATEGORY_UPDATES")
+                        removeLabelFromEmail(service, result_id, "CATEGORY_UPDATES")
 
                     if moveFolder == 2: # Move status update email to status folder
                        print("Moving email to Status folder")

@@ -150,5 +150,5 @@ def list_labels(service):
 # Function to remove label from email
 def removeLabelFromEmail(service, message_id, label_ids):
     service.users().messages().modify(
-        userId="me", id=message_id, body={"removeLabelIds": label_ids}
+        userId="me", id=message_id, body={"removeLabelIds": [label_ids]}
     ).execute()
