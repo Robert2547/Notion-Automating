@@ -63,27 +63,31 @@ def isImportant(email_from, subject):
 def extractEmail(message_id, service):
     message = service.users().messages().get(userId="me", id=message_id).execute()
     message_payload = message["payload"]
+    email_text = ""
+
+    def extract_from_html(html_content):
+        soup = BeautifulSoup(html_content, "html.parser")
+        text = ""
+        for tag in soup.find_all(
+            ["p", "div"]
+        ):  # Extract text from both <p> and <div> tags
+            text += tag.get_text().strip() + "\n"
+        return text
 
     if "parts" in message_payload:
-        parts = message_payload["parts"]
-        email_text = ""
-        for part in parts:
-            if part["mimeType"] == "text/html":  # Look for HTML content
+        for part in message_payload["parts"]:
+            if part["mimeType"] == "text/html":
                 html_content = base64.urlsafe_b64decode(part["body"]["data"]).decode(
                     "utf-8"
                 )
-                soup = BeautifulSoup(html_content, "html.parser")
-                for p in soup.find_all("p"):  # Extract text from paragraph tags
-                    email_text += p.get_text() + "\n"
-    else:
-        if message_payload["mimeType"] == "text/html":
-            html_content = base64.urlsafe_b64decode(
-                message_payload["body"]["data"]
-            ).decode("utf-8")
-            soup = BeautifulSoup(html_content, "html.parser")
-            email_text = "\n".join(p.get_text() for p in soup.find_all("p"))
+                email_text += extract_from_html(html_content)
+    elif message_payload.get("mimeType") == "text/html":
+        html_content = base64.urlsafe_b64decode(message_payload["body"]["data"]).decode(
+            "utf-8"
+        )
+        email_text += extract_from_html(html_content)
 
-    return email_text
+    return email_text.strip()
 
 
 # Function to read the email
@@ -108,6 +112,7 @@ def readEmail(message_id, service):
 
     is_important = isImportant(message_from, subject)
     if is_important:
+        print(f"Subject: {subject}")
         return message_id
     return
 

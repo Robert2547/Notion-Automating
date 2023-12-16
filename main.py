@@ -29,7 +29,6 @@ def main():
                 result_id = readEmail(message_id, service)  # Store message id if it is important
 
                 if result_id is not None:  # If the email is important, append it to the list
-
                     email_text = extractEmail(result_id, service) # Extract email text
                     print("\nEmail text:")
                     print(email_text)
