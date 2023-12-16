@@ -73,10 +73,9 @@ def add_application(data, published_date):
         "Company": {"type": "title", "title": [{"text": {"content": company}}]},
         "Status": {"type": "status", "status": {"name": status}},
         "Date": {"type": "date", "date": {"start": published_date, "end": None}},
-        "Position": {"type": "text", "text": [{"text": {"content": role}}],},
+        "Position": {"rich_text": [{"text": {"content": role}}]},
     }
-
-    create_page(notion_format, DATABASE_ID, headers_status)
+    res = create_page(notion_format, DATABASE_ID, headers_status)
     print("Application added successfully")
 
     return 1 # Move to Application folder
