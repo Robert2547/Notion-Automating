@@ -1,8 +1,7 @@
 from library.gmail import readEmail, authenticate_gmail, extractEmail, moveEmailToFolder, removeLabelFromEmail, list_labels
 from validEmail import validEmail
 
-
-def main():
+def main(request):
 
     try:
         # Call the Gmail API
@@ -21,10 +20,10 @@ def main():
 
         Status_id = "Label_4431053980928013011"
         Application_id = "Label_6204160254045272793"
+        Joblist_id = "Label_6555342805228748060"
         
         for message in userId.get("messages", []):  # Loop through all messages
             message_id = message["id"]  # Get the id of each message
-
             try:
                 result_id = readEmail(message_id, service)  # Store message id if it is important
 
@@ -47,7 +46,7 @@ def main():
 
                     elif moveFolder == 3: # Move joblist email to trash
                         print("Moving email to Trash folder")
-                        moveEmailToFolder(result_id, "TRASH", service)
+                        moveEmailToFolder(result_id, Joblist_id, service)
                     else:
                         print("Email is neither a job listing nor a application update")
 
