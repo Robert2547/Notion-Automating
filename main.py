@@ -1,7 +1,7 @@
 from library.gmail import readEmail, authenticate_gmail, extractEmail, moveEmailToFolder, removeLabelFromEmail, list_labels
 from validEmail import validEmail
 
-def main(request):
+def main():
 
     try:
         # Call the Gmail API
