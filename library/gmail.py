@@ -1,4 +1,5 @@
 import base64
+import email, re
 import os.path
 
 from bs4 import BeautifulSoup
@@ -33,62 +34,53 @@ def authenticate_gmail():
     return build("gmail", "v1", credentials=creds)
 
 
-# Function to check if the email is anything related to Software Engineering
-def isImportant(email_from, subject):
-    # Convert both the sender's email and subject to lowercase for case-insensitive matching
-    email_from_lower = email_from.lower()
-    subject_lower = subject.lower()
-
-    # List of keywords to check for
-    keywords = [
-        "software",
-        "intern",
-        "internship",
-        "software internship",
-        "thank you for applying",
-        "thank",
-        "application",
-        "apply",
-    ]
-
-    # Check if any keyword is in the sender's email or subject
-    for keyword in keywords:
-        if keyword in email_from_lower or keyword in subject_lower:
-            return True  # Return True if any keyword is found
-
-    return False  # Return False if none of the keywords are found
-
-
-# Function to extract the text from the email
+# Function to extract the email text
 def extractEmail(message_id, service):
-    message = service.users().messages().get(userId="me", id=message_id).execute()
-    message_payload = message["payload"]
-    email_text = ""
+    try:
+        # Get the message from its ID
+        message = service.users().messages().get(userId='me', id=message_id, format='raw').execute()
 
-    def extract_from_html(html_content):
-        soup = BeautifulSoup(html_content, "html.parser")
+        # Decode the email
+        msg_str = base64.urlsafe_b64decode(message['raw'].encode('ASCII'))
+        mime_msg = email.message_from_bytes(msg_str)
+
+        # Extract and clean content
         text = ""
-        for tag in soup.find_all(
-            ["p", "div"]
-        ):  # Extract text from both <p> and <div> tags
-            text += tag.get_text().strip() + "\n"
-        return text
+        if mime_msg.is_multipart():
+            for part in mime_msg.walk():
+                content_type = part.get_content_type()
+                if content_type == 'text/plain' or content_type == 'text/html':
+                    part_payload = part.get_payload(decode=True).decode()
+                    if content_type == 'text/html':
+                        soup = BeautifulSoup(part_payload, 'html.parser')
+                        for script_or_style in soup(["script", "style"]):
+                            script_or_style.decompose()
+                        clean_text = soup.get_text()
+                        text += clean_text + "\n"
+                    else:
+                        text += part_payload + "\n"
+        else:
+            content_type = mime_msg.get_content_type()
+            if content_type == 'text/plain' or content_type == 'text/html':
+                payload = mime_msg.get_payload(decode=True).decode()
+                if content_type == 'text/html':
+                    soup = BeautifulSoup(payload, 'html.parser')
+                    for script_or_style in soup(["script", "style"]):
+                        script_or_style.decompose()
+                    text = soup.get_text()
+                else:
+                    text = payload
 
-    if "parts" in message_payload:
-        for part in message_payload["parts"]:
-            if part["mimeType"] == "text/html":
-                html_content = base64.urlsafe_b64decode(part["body"]["data"]).decode(
-                    "utf-8"
-                )
-                email_text += extract_from_html(html_content)
-    elif message_payload.get("mimeType") == "text/html":
-        html_content = base64.urlsafe_b64decode(message_payload["body"]["data"]).decode(
-            "utf-8"
-        )
-        email_text += extract_from_html(html_content)
+        # Remove URLs
+        text_no_urls = re.sub(r'http\S+', '', text)
 
-    return email_text.strip()
+        # Remove excessive whitespaces
+        cleaned_text = re.sub(r'\s+', ' ', text_no_urls).strip()
+        return cleaned_text
 
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 # Function to read the email
 def readEmail(message_id, service):
@@ -110,11 +102,7 @@ def readEmail(message_id, service):
             # print(subject)
             break  # break the loop when get the subject
 
-    is_important = isImportant(message_from, subject)
-    if is_important:
-        print(f"Subject: {subject}")
-        return message_id
-    return
+    return message_id, subject
 
 
 # Function to move the email to a folder

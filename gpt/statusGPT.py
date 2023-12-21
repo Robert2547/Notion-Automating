@@ -16,7 +16,7 @@ else:
     print("API key not found in environment variables.")
 
 
-def getGPT(email):
+def getGPT(email, subject):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -49,10 +49,10 @@ if its anything else return the response in following JSON format and nothing el
             },
             {
                 "role": "user",
-                "content": email,
+                "content": "Subject: " + subject + "\nEmail: " + email,
             },
         ],
-        temperature=0.1,
+        temperature=0.5,
     )
 
     # Extract the response

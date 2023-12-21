@@ -25,13 +25,10 @@ def main():
         for message in userId.get("messages", []):  # Loop through all messages
             message_id = message["id"]  # Get the id of each message
             try:
-                result_id = readEmail(message_id, service)  # Store message id if it is important
-
-                if result_id is not None:  # If the email is important, append it to the list
+                result_id, subject = readEmail(message_id, service)  # Store message id if it is important
+                if result_id is not None:  
                     email_text = extractEmail(result_id, service) # Extract email text
-                    print("\nEmail text:")
-                    print(email_text)
-                    moveFolder = validEmail(email_text) # Check if email is a job listing, status update or neither 
+                    moveFolder = validEmail(email_text, subject) # Check if email is a job listing, status update or neither 
 
                     if moveFolder != 0: #Remove updates label
                         removeLabelFromEmail(service, result_id, "CATEGORY_UPDATES")

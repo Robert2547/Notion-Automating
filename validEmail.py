@@ -5,10 +5,10 @@ from gpt.statusGPT import getGPT
 from joblist import add_job
 
 
-def validEmail(email_text):
+def validEmail(email_text, subject):
     published_date = datetime.now().astimezone(timezone.utc).isoformat()
     try:
-        job_json = getGPT(email_text)  # Get the JSON string from GPT-3
+        job_json = getGPT(email_text, subject)  # Get the JSON string from GPT-3
         # Removing the extraneous `json` and backticks
         clean_json = job_json.replace("json", "").strip().strip("`")
 

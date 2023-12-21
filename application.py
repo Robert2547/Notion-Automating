@@ -34,13 +34,13 @@ def add_application(data, published_date):
     company = data.get("Company", "N/A")
     status = data.get("Status", "N/A")
     role = data.get("Role", "Software Engineer Intern (default)")
+    if len(role) < 5:
+        role = "Software Engineer Intern (default)"
+    
 
     print("\nCompany:", company)
     print("Status:", status)
     print("Role:", role)
-    if(role.length < 5):
-        role = "Software Engineer Intern (default)"
-        print("Role is too short, defaulting to Software Engineer Intern")
     print("\n")
 
     moveOption = 0
