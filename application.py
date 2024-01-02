@@ -51,20 +51,25 @@ def add_application(data, published_date):
         for pages in page:  # Loop through each page
             if (pages["properties"]["Company"]["title"][0]["text"]["content"] == company):  # If the company name already exists in the status notion database
                 joblist_page = get_pages( headers_application, JOBDB_KEY )  # Get all pages in the joblist notion database
-                print("\nCompany already exists in the application notion database!")
+                print("\nCompany already exists in the APPLICATION database!")
                 for joblist_pages in joblist_page:  # Loop through each page
                     if (joblist_pages["properties"]["Company"]["title"][0]["text"]["content"] == company) and (joblist_pages["properties"]["Role"]["rich_text"][0]["text"]["content"] == role):
-                        # If the company name and role already exists in the joblist notion database
-                        # Delete the page in joblist notion database and update the status in application notion database
-                        print("\nCompany and role already exists in the joblist notion database!")
+                        # If the company name and role already exists in the JOBLIST database
+                        # Delete the page in JOBLIST database and update the status in APPLICATION database
+                        print("\nCompany and role already exists in the JOBLIST database!")
                         joblist_page_id = joblist_pages["id"]
                         delete_page(joblist_page_id, headers_application)  # Move the page to the trash
                         print("Page has been deleted!\n")
                         break
-                         
+
+                # If company already exists, but role does not exist, then add new page
+                if(pages["properties"]["Position"]["rich_text"][0]["text"]["content"] != role):
+                    print("Role does not exists in the APPLICATION database!")
+                    break
+                
+
                 page_id = pages["id"]
                 update_page( page_id, {"Status": {"status": {"name": status}}}, headers_status)  # Update the status
-                print(f"Status has been updated to {status}!\n")
                 return 2 # Move to Status folder  
         print("\nCompany does not exist in the application notion database!") 
     except Exception as error:
