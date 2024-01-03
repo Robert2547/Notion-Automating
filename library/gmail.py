@@ -102,7 +102,7 @@ def readEmail(message_id, service):
             # print(subject)
             break  # break the loop when get the subject
 
-    return message_id, subject, message_from
+    return message_id, subject
 
 
 # Function to move the email to a folder
