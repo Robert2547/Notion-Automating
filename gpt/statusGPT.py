@@ -16,43 +16,49 @@ else:
     print("API key not found in environment variables.")
 
 
-def getGPT(email, subject):
+def getGPT(email, subject, category):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "system",
-                "content": """Pretend you are a consultants at analyzing email.You are given a email about software, determine whether this email is about new job posting or application, if the following is about new job posting use this JSON format:
- "JobList": "Yes",
-{ Jobs:[   
+                "content": """  PPretend you are a consultants at analyzing email. Given a email content, subject and help from my ML output, categorize the following email into JobList, Application UPDATE, or NEW Application. If the following contain information about new job list use this JSON format: "JobList": "Yes",
+{  Jobs:[   
      "Company":
      "Role":
      "Location":
     "URL":
 ]} 
-else if it about application update use the following JSON format, and DO NOT include the "JobList":
+
+Else if it about NEW application use the following JSON format:
 "Application": "Yes",
 {
     "Company":
-    "Status": "Applied"/"Rejected"/"Interview"/"Online Assignment"
-    "Role": }
-if its anything else return the response in following JSON format and nothing else:
+    "Status": "Applied"
+    "Role": 
+}
+
+Else if it about application UPDATE use the following JSON format:
+“Update”: “Yes”,
+{
+	"Company":
+    	"Status": "Rejected"/"Interview"/"Online Assignment"
+   	 "Role": 
+}
+Else if its anything else return the response in following JSON format and nothing else:
 {
     "Joblist":  "No"
     "Application": "No"
-} If you are given email from the following assume that I already finish my application: 
-"Thanks for your interest in (role) on WayUp! Have you completed the second part of the application process on (company)"
-
-
+} 
 
 """,
             },
             {
                 "role": "user",
-                "content": "Subject: " + subject + "\nEmail: " + email,
+                "content": "Subject: " + subject + "\nEmail: " + email + "ML Category: " + category,
             },
         ],
-        temperature=0.5,
+        temperature=0.9,
     )
 
     # Extract the response

@@ -1,5 +1,9 @@
-from library.gmail import readEmail, authenticate_gmail, extractEmail, moveEmailToFolder, removeLabelFromEmail, list_labels
-from validEmail import validEmail
+from library.gmail import readEmail, authenticate_gmail, extractEmail, removeLabelFromEmail
+from library.validEmail import validEmail
+from models.model  import model_main
+from models.csv import load_csv
+from joblib import load
+
 
 def main():
 
@@ -16,37 +20,32 @@ def main():
             .execute()
         )
 
-        moveFolder =  0 # 1 = Application, 2 = Status, 3 = Trash(Joblist)
+        moveFolder =  0 # 1 = Application, 2 = Status, 3 = Joblist, 0 = Neither
 
-        Status_id = "Label_4431053980928013011"
-        Application_id = "Label_6204160254045272793"
-        Joblist_id = "Label_6555342805228748060"
+        # Load saved model and vectorizer
+        model = load("email_classifier_model.joblib")
+        vectorizer = load("vectorizer.joblib")
 
-        
         for message in userId.get("messages", []):  # Loop through all messages
             message_id = message["id"]  # Get the id of each message
             try:
-                result_id, subject, message_from = readEmail(message_id, service)  # Store message id if it is important
-                if result_id is not None:  
-                    email_text = extractEmail(result_id, service) # Extract email text
-                    moveFolder = validEmail(email_text, subject) # Check if email is a job listing, status update or neither 
+                email_id, subject = readEmail(message_id, service)  # Store email id and subject
+                if email_id is not None: # Check if email is not empty
+                    try:
+                        email_text = extractEmail(email_id, service) # Extract email text
+                    except Exception as error:
+                        print(f"An error occurred while trying to extract email: {error}")
+                        print(f"Email id: {email_id}, Subject: {subject}")
+                        continue
 
-                    if moveFolder != 0: #Remove updates label
-                        removeLabelFromEmail(service, result_id, "CATEGORY_UPDATES")
+                    email_features = vectorizer.transform([email_text]) # Vectorize email content
+                    prediction = model.predict(email_features)
+                    category = prediction[0]
+                    print(f"The email is categorized as: {category}")
+                    
+                    validEmail(email_text, subject, category, service, email_id) # Check if email is a job listing, status update or neither 
 
-                    if moveFolder == 2: # Move status update email to status folder
-                       print("Moving email to Status folder")
-                       moveEmailToFolder(result_id, Status_id, service) 
-
-                    elif moveFolder == 1: # Move new application email to application folder
-                        print("Moving email to Application folder")
-                        moveEmailToFolder(result_id, Application_id, service) 
-
-                    elif moveFolder == 3: # Move joblist email to trash
-                        print("Moving email to Trash folder")
-                        moveEmailToFolder(result_id, Joblist_id, service)
-                    else:
-                        print("Email is neither a job listing nor a application update")
+                    removeLabelFromEmail(service, email_id, "CATEGORY_UPDATES")
 
             except Exception as error:
                 print(f"An error occurred while trying to read email: {error}")
